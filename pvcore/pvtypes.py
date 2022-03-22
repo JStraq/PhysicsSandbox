@@ -79,6 +79,8 @@ class Vector:
         return Vector(self.components / self.magnitude)
 
 
+
+
 class VectorField():
     def __init__(self, definition=None, units=None, coordinates=None, components=None):
         self.deftype = "function" if definition is not None else "data"
@@ -135,3 +137,58 @@ class VectorField():
                 oldvec = thisvec
                 
         return np.vstack((paths[1][::-1], paths[0]))
+    
+    
+    
+class ScalarField():
+    def __init__(self, definition=None, graddef=None, units=None, coordinates=None, values=None):
+        self.deftype = "function" if definition is not None else "data"
+        self.gradtype = "function" if graddef is not None else "manual"
+        self.definition = definition
+        self.graddef = graddef
+        self.units = units
+        self.values = values
+        if self.values is None:
+            self.values = {}
+            self.coordinates = []
+        else:
+            self.values = values
+            self.coordinates = coordinates
+        
+        ## NEED ARBITRARY DIMENSIONS SUPPORT?
+
+    def __call__(self, point, *args):
+        if self.deftype == "function":
+            if point not in self.coordinates:
+                self.coordinates.append(point)
+                self.values[tuple(point)] = self.definition(*point, *args)
+            return self.values[tuple(point)]
+        
+    def gradient(self, coordinates):
+        if self.gradtype == "function":
+            return self.graddef(coordinates)
+        
+    def streamline(self, start, maxcoords=None, mincoords=None):
+        raise NotImplementedError()
+        
+    def contour(self, values, maxcoords=None, mincoords=None, res=None):
+        """
+        Implement marching squares with a linear interpolation to find specified contours
+        """
+        
+        # hardcode limits for dev
+        # start with 2D case
+        
+        path = []
+        
+        grid = np.linspace(-3, 3, res)
+        for ii in range(res-1):
+            for jj in range(res-1):
+                
+                box = np.zeros((2,2))
+                box[0,0] = self((grid[ii],   grid[jj]  ))  # left bottom
+                box[0,1] = self((grid[ii],   grid[jj+1]))  # left top
+                box[1,0] = self((grid[ii+1], grid[jj]  ))  # right bottom
+                box[1,1] = self((grid[ii+1], grid[jj+1]))  # right top
+                
+                boxpos = np.where((box-value)>0, 1,0)
