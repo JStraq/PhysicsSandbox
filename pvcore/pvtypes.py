@@ -171,24 +171,5 @@ class ScalarField():
     def streamline(self, start, maxcoords=None, mincoords=None):
         raise NotImplementedError()
         
-    def contour(self, values, maxcoords=None, mincoords=None, res=None):
-        """
-        Implement marching squares with a linear interpolation to find specified contours
-        """
-        
-        # hardcode limits for dev
-        # start with 2D case
-        
-        path = []
-        
-        grid = np.linspace(-3, 3, res)
-        for ii in range(res-1):
-            for jj in range(res-1):
-                
-                box = np.zeros((2,2))
-                box[0,0] = self((grid[ii],   grid[jj]  ))  # left bottom
-                box[0,1] = self((grid[ii],   grid[jj+1]))  # left top
-                box[1,0] = self((grid[ii+1], grid[jj]  ))  # right bottom
-                box[1,1] = self((grid[ii+1], grid[jj+1]))  # right top
-                
-                boxpos = np.where((box-value)>0, 1,0)
+    def contour(self):
+        raise NotImplementedError()
