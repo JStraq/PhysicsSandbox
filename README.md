@@ -1,2 +1,2 @@
-# PhysVis
-Collection of code for visualizing concepts in physics and engineering
+# PhysicsSandbox
+Collection of code for visualizing and experimenting with concepts in physics and engineering
